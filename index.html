@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Linge Hôtel" />
+  <title>Calculateur Linge Hôtel</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --surface-2: #0b1220;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --border: #334155;
+      --accent: #38bdf8;
+      --accent-text: #04131c;
+      --ok: #22c55e;
+      --warn: #f59e0b;
+      --danger: #ef4444;
+      --radius: 12px;
+    }
+
+    [data-theme="light"] {
+      --bg: #f1f5f9;
+      --surface: #ffffff;
+      --surface-2: #f8fafc;
+      --text: #0f172a;
+      --muted: #475569;
+      --border: #cbd5e1;
+      --accent: #0284c7;
+      --accent-text: #ffffff;
+      --ok: #16a34a;
+      --warn: #d97706;
+      --danger: #dc2626;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.45;
+      padding-bottom: 56px;
+    }
+
+    .app {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 14px;
+    }
+
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      font-size: 1.25rem;
+      margin: 0;
+    }
+
+    .header-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    button, input, select, textarea {
+      font: inherit;
+      color: var(--text);
+    }
+
+    button {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    button:hover {
+      border-color: var(--accent);
+    }
+
+    button.primary {
+      background: var(--accent);
+      color: var(--accent-text);
+      border-color: var(--accent);
+    }
+
+    button.active {
+      background: var(--accent);
+      color: var(--accent-text);
+      border-color: var(--accent);
+    }
+
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px;
+      margin-bottom: 14px;
+    }
+
+    .panel-title {
+      font-size: 1rem;
+      font-weight: 700;
+      margin: 0 0 10px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 12px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(125px, 1fr));
+      gap: 10px;
+    }
+
+    .subbox {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+    }
+
+    label.field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    label.field input,
+    label.field select {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 7px 9px;
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    .summary-line {
+      margin-top: 8px;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .items-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .item-card {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+    }
+
+    .item-top {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .item-name {
+      font-weight: 700;
+      font-size: 1rem;
+    }
+
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .order-badge {
+      background: var(--accent);
+      color: var(--accent-text);
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 0.9rem;
+    }
+
+    .surplus-badge {
+      background: rgba(245, 158, 11, 0.16);
+      color: var(--warn);
+      border: 1px solid var(--warn);
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 0.82rem;
+    }
+
+    .item-inputs {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(95px, 1fr));
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .breakdown {
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    .bon-box {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      white-space: pre-line;
+      font-size: 0.95rem;
+    }
+
+    .section-hidden {
+      display: none;
+    }
+
+    .row-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 600px) {
+      .app {
+        padding: 10px;
+      }
+      button {
+        padding: 8px 10px;
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>Calculateur Linge Hôtel</h1>
+      <div class="header-actions">
+        <button type="button" id="themeToggleBtn">Mode Clair</button>
+        <button type="button" id="showAllBtn">Tout afficher</button>
+        <button type="button" class="primary" id="saveBtn">Enregistrer</button>
+        <button type="button" id="resetDefaultBtn">Configuration d'origine</button>
+      </div>
+    </header>
+
+    <nav class="tabs" aria-label="Navigation">
+      <button type="button" class="tab-btn active" data-tab="commande">Commande &amp; Fréquentation</button>
+      <button type="button" class="tab-btn" data-tab="ajustement">Ajustement de stock</button>
+      <button type="button" class="tab-btn" data-tab="articles">Articles &amp; Paramètres</button>
+    </nav>
+
+    <!-- SECTION 1 : COMMANDE & FRÉQUENTATION -->
+    <section id="sec-commande" class="tab-section">
+      <div class="panel">
+        <h2 class="panel-title">Fréquentation (Réel &amp; Prévisionnel)</h2>
+        <div class="grid-2">
+          <!-- RÉEL -->
+          <div class="subbox">
+            <strong>Réel</strong>
+            <div class="grid-4" style="margin-top:8px;">
+              <label class="field">
+                Chambres réelles
+                <input type="number" min="0" id="reelChambres" />
+              </label>
+              <label class="field">
+                Départs réels
+                <input type="number" min="0" id="reelDeparts" />
+              </label>
+              <label class="field">
+                Recouches réelles
+                <input type="number" min="0" id="reelRecouches" />
+              </label>
+              <label class="field">
+                Twins / départs
+                <input type="number" min="0" id="reelTwinsDeparts" />
+              </label>
+              <label class="field">
+                Twins / recouches
+                <input type="number" min="0" id="reelTwinsRecouches" />
+              </label>
+            </div>
+            <div class="summary-line" id="constatReel"></div>
+          </div>
+
+          <!-- PRÉVISIONNEL -->
+          <div class="subbox">
+            <strong>Prévisionnel</strong>
+            <div class="grid-4" style="margin-top:8px;">
+              <label class="field">
+                Chambres prévues
+                <input type="number" min="0" id="prevChambres" />
+              </label>
+              <label class="field">
+                Départs prévus
+                <input type="number" min="0" id="prevDeparts" />
+              </label>
+              <label class="field">
+                Recouches prévues
+                <input type="number" min="0" id="prevRecouches" />
+              </label>
+              <label class="field">
+                Twins / départs
+                <input type="number" min="0" id="prevTwinsDeparts" />
+              </label>
+              <label class="field">
+                Twins / recouches
+                <input type="number" min="0" id="prevTwinsRecouches" />
+              </label>
+            </div>
+            <div class="summary-line" id="constatPrev"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2 class="panel-title">Articles — Stock lingerie, Max, Rebut &amp; Calcul</h2>
+        <p class="muted" style="margin-top:0;">
+          Solde avant rebut = <strong>(Max − Stock) + Besoin activité/twins</strong>. Si le solde est négatif, un <strong>Surplus</strong> apparaît et compense la commande ; le <strong>Rebut</strong> s'ajoute toujours à la commande.
+        </p>
+        <div id="commandeItems" class="items-list"></div>
+      </div>
+
+      <div class="panel">
+        <div class="item-top">
+          <h2 class="panel-title" style="margin:0;">BON DE COMMANDE</h2>
+          <button type="button" class="primary" id="copyBonBtn">Copier le bon</button>
+        </div>
+        <div id="bonDeCommande" class="bon-box"></div>
+      </div>
+    </section>
+
+    <!-- SECTION 2 : AJUSTEMENT DE STOCK -->
+    <section id="sec-ajustement" class="tab-section section-hidden">
+      <div class="panel">
+        <h2 class="panel-title">Ajustement de stock (linge en lingerie / recouches / écarts)</h2>
+        <p class="muted" style="margin-top:0;">
+          Saisis une variation positive (ex. <code>+10</code>) ou négative (ex. <code>-4</code>) puis applique.
+        </p>
+        <div id="ajustementItems" class="items-list"></div>
+      </div>
+    </section>
+
+    <!-- SECTION 3 : ARTICLES & PARAMÈTRES -->
+    <section id="sec-articles" class="tab-section section-hidden">
+      <div class="panel">
+        <h2 class="panel-title">Articles &amp; Paramètres de dotation</h2>
+        <div id="configItems" class="items-list"></div>
+
+        <div class="subbox" style="margin-top:14px;">
+          <strong>Ajouter un nouvel article</strong>
+          <div class="grid-4" style="margin-top:8px;">
+            <label class="field">
+              Nom de l'article
+              <input type="text" id="newItemName" placeholder="Ex. Torchons" />
+            </label>
+            <label class="field">
+              Max
+              <input type="number" min="0" id="newItemMax" value="100" />
+            </label>
+            <label class="field">
+              Stock actuel
+              <input type="number" min="0" id="newItemStock" value="100" />
+            </label>
+            <label class="field">
+              Rebut
+              <input type="number" min="0" id="newItemRebut" value="0" />
+            </label>
+            <label class="field">
+              Par départ
+              <input type="number" min="0" step="0.5" id="newItemDepart" value="1" />
+            </label>
+            <label class="field">
+              Par recouche
+              <input type="number" min="0" step="0.5" id="newItemRecouche" value="0" />
+            </label>
+            <label class="field">
+              Unités / Twin départ
+              <input type="number" min="0" step="0.5" id="newItemTwinDepart" value="0" />
+            </label>
+            <label class="field">
+              Unités / Twin recouche
+              <input type="number" min="0" step="0.5" id="newItemTwinRecouche" value="0" />
+            </label>
+          </div>
+          <div class="row-actions">
+            <button type="button" class="primary" id="addItemBtn">Ajouter l'article</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "calculateur_linge_hotel_v1";
+
+    const DEFAULT_ITEMS = [
+      {
+        id: "grands-draps",
+        name: "Grands draps",
+        max: 100,
+        stock: 100,
+        rebut: 0,
+        perDepart: 1,
+        perRecouche: 0,
+        twinDepart: 0,
+        twinRecouche: 0
+      },
+      {
+        id: "petits-draps",
+        name: "Petits draps",
+        max: 100,
+        stock: 100,
+        rebut: 0,
+        perDepart: 0,
+        perRecouche: 0,
+        twinDepart: 2,
+        twinRecouche: 0
+      },
+      {
+        id: "grandes-housses",
+        name: "Grandes housses de couette",
+        max: 100,
+        stock: 100,
+        rebut: 0,
+        perDepart: 1,
+        perRecouche: 0,
+        twinDepart: 0,
+        twinRecouche: 0
+      },
+      {
+        id: "petites-housses",
+        name: "Petites housses",
+        max: 100,
+        stock: 100,
+        rebut: 0,
+        perDepart: 0,
+        perRecouche: 0,
+        twinDepart: 2,
+        twinRecouche: 0
+      },
+      {
+        id: "taies-oreiller",
+        name: "Taies d'oreiller",
+        max: 120,
+        stock: 120,
+        rebut: 0,
+        perDepart: 4,
+        perRecouche: 0,
+        twinDepart: 0,
+        twinRecouche: 0
+      },
+      {
+        id: "grandes-serviettes",
+        name: "Grandes serviettes",
+        max: 120,
+        stock: 120,
+        rebut: 0,
+        perDepart: 2,
+        perRecouche: 2,
+        twinDepart: 0,
+        twinRecouche: 0
+      },
+      {
+        id: "petites-serviettes",
+        name: "Petites serviettes",
+        max: 120,
+        stock: 120,
+        rebut: 0,
+        perDepart: 2,
+        perRecouche: 2,
+        twinDepart: 0,
+        twinRecouche: 0
+      },
+      {
+        id: "tapis-de-bain",
+        name: "Tapis de bain",
+        max: 100,
+        stock: 100,
+        rebut: 0,
+        perDepart: 1,
+        perRecouche: 0,
+        twinDepart: 0,
+        twinRecouche: 0
+      }
+    ];
+
+    const DEFAULT_STATE = {
+      theme: "dark",
+      showAll: false,
+      activeTab: "commande",
+      activity: {
+        reelChambres: 20,
+        reelDeparts: 10,
+        reelRecouches: 10,
+        reelTwinsDeparts: 3,
+        reelTwinsRecouches: 2,
+        prevChambres: 20,
+        prevDeparts: 10,
+        prevRecouches: 10,
+        prevTwinsDeparts: 0,
+        prevTwinsRecouches: 0
+      },
+      items: structuredClone(DEFAULT_ITEMS)
+    };
+
+    function num(val, fallback = 0) {
+      const n = Number(val);
+      return Number.isFinite(n) ? n : fallback;
+    }
+
+    function normalizeActivityBlock(chambres, departs, recouches, twinsDeparts, twinsRecouches) {
+      const ch = Math.max(0, Math.round(num(chambres)));
+      let dep = Math.max(0, Math.round(num(departs)));
+      let rec = Math.max(0, Math.round(num(recouches)));
+
+      if (dep > ch) {
+        dep = ch;
+        rec = 0;
+      } else if (dep + rec > ch) {
+        rec = Math.max(0, ch - dep);
+      }
+
+      const td = Math.min(dep, Math.max(0, Math.round(num(twinsDeparts))));
+      const tr = Math.min(rec, Math.max(0, Math.round(num(twinsRecouches))));
+
+      return {
+        chambres: ch,
+        departs: dep,
+        recouches: rec,
+        twinsDeparts: td,
+        twinsRecouches: tr
+      };
+    }
+
+    function sanitizeActivity(rawAct) {
+      const a = { ...DEFAULT_STATE.activity, ...(rawAct || {}) };
+      const reel = normalizeActivityBlock(
+        a.reelChambres,
+        a.reelDeparts,
+        a.reelRecouches,
+        a.reelTwinsDeparts,
+        a.reelTwinsRecouches
+      );
+      const prev = normalizeActivityBlock(
+        a.prevChambres,
+        a.prevDeparts,
+        a.prevRecouches,
+        a.prevTwinsDeparts,
+        a.prevTwinsRecouches
+      );
+
+      return {
+        reelChambres: reel.chambres,
+        reelDeparts: reel.departs,
+        reelRecouches: reel.recouches,
+        reelTwinsDeparts: reel.twinsDeparts,
+        reelTwinsRecouches: reel.twinsRecouches,
+        prevChambres: prev.chambres,
+        prevDeparts: prev.departs,
+        prevRecouches: prev.recouches,
+        prevTwinsDeparts: prev.twinsDeparts,
+        prevTwinsRecouches: prev.twinsRecouches
+      };
+    }
+
+    function ensureDefaultItems(items) {
+      const list = Array.isArray(items) && items.length ? items.map((it) => ({ ...it })) : [];
+      const hasTapis = list.some((it) => {
+        const idMatch = (it.id || "").toLowerCase().includes("tapis");
+        const nameMatch = (it.name || "").toLowerCase().includes("tapis");
+        return idMatch || nameMatch;
+      });
+      if (!hasTapis) {
+        const tapisDefault = DEFAULT_ITEMS.find((it) => it.id === "tapis-de-bain");
+        if (tapisDefault) list.push({ ...tapisDefault });
+      }
+      return list;
+    }
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return structuredClone(DEFAULT_STATE);
+        const parsed = JSON.parse(raw);
+        return {
+          theme: parsed.theme === "light" ? "light" : "dark",
+          showAll: Boolean(parsed.showAll),
+          activeTab: ["commande", "ajustement", "articles"].includes(parsed.activeTab)
+            ? parsed.activeTab
+            : "commande",
+          activity: sanitizeActivity(parsed.activity),
+          items: ensureDefaultItems(parsed.items)
+        };
+      } catch {
+        return structuredClone(DEFAULT_STATE);
+      }
+    }
+
+    let state = loadState();
+    const adjustDeltas = {};
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch {
+        // Ignorer les erreurs de stockage privé
+      }
+    }
+
+    function applyTheme() {
+      document.documentElement.setAttribute("data-theme", state.theme);
+      document.getElementById("themeToggleBtn").textContent =
+        state.theme === "dark" ? "Mode Clair" : "Mode Sombre";
+    }
+
+    function applyVisibility() {
+      const showAllBtn = document.getElementById("showAllBtn");
+      showAllBtn.classList.toggle("active", state.showAll);
+
+      document.querySelectorAll(".tab-section").forEach((sec) => {
+        const tabName = sec.id.replace("sec-", "");
+        const visible = state.showAll || state.activeTab === tabName;
+        sec.classList.toggle("section-hidden", !visible);
+      });
+
+      document.querySelectorAll(".tab-btn").forEach((btn) => {
+        btn.classList.toggle("active", !state.showAll && btn.dataset.tab === state.activeTab);
+      });
+    }
+
+    function syncActivityFields() {
+      state.activity = sanitizeActivity(state.activity);
+      const a = state.activity;
+      const map = {
+        reelChambres: a.reelChambres,
+        reelDeparts: a.reelDeparts,
+        reelRecouches: a.reelRecouches,
+        reelTwinsDeparts: a.reelTwinsDeparts,
+        reelTwinsRecouches: a.reelTwinsRecouches,
+        prevChambres: a.prevChambres,
+        prevDeparts: a.prevDeparts,
+        prevRecouches: a.prevRecouches,
+        prevTwinsDeparts: a.prevTwinsDeparts,
+        prevTwinsRecouches: a.prevTwinsRecouches
+      };
+
+      Object.entries(map).forEach(([id, val]) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const clamped = Math.min(
+          id.includes("TwinsDeparts")
+            ? (id.startsWith("reel") ? a.reelDeparts : a.prevDeparts)
+            : id.includes("TwinsRecouches")
+              ? (id.startsWith("reel") ? a.reelRecouches : a.prevRecouches)
+              : Infinity,
+          val
+        );
+        if (document.activeElement !== el || num(el.value) !== clamped) {
+          el.value = clamped;
+        }
+      });
+
+      document.getElementById("constatReel").textContent =
+        `Constat réel : ${a.reelChambres} ch. · ${a.reelDeparts} dép. (dont ${a.reelTwinsDeparts} twins) · ${a.reelRecouches} rec. (dont ${a.reelTwinsRecouches} twins)`;
+      document.getElementById("constatPrev").textContent =
+        `Constat prévisionnel : ${a.prevChambres} ch. · ${a.prevDeparts} dép. (dont ${a.prevTwinsDeparts} twins) · ${a.prevRecouches} rec. (dont ${a.prevTwinsRecouches} twins)`;
+    }
+
+    function computeItemOrder(item) {
+      const a = state.activity;
+      const max = Math.max(0, num(item.max));
+      const stock = Math.max(0, num(item.stock));
+      const rebut = Math.max(0, num(item.rebut));
+      const perDepart = Math.max(0, num(item.perDepart));
+      const perRecouche = Math.max(0, num(item.perRecouche));
+      const twinDepart = Math.max(0, num(item.twinDepart));
+      const twinRecouche = Math.max(0, num(item.twinRecouche));
+
+      const ecartMax = max - stock;
+      const totalDeparts = Math.max(0, num(a.reelDeparts)) + Math.max(0, num(a.prevDeparts));
+      const totalRecouches = Math.max(0, num(a.reelRecouches)) + Math.max(0, num(a.prevRecouches));
+      const totalTwinsDeparts = Math.max(0, num(a.reelTwinsDeparts)) + Math.max(0, num(a.prevTwinsDeparts));
+      const totalTwinsRecouches = Math.max(0, num(a.reelTwinsRecouches)) + Math.max(0, num(a.prevTwinsRecouches));
+
+      const besoinDeparts = totalDeparts * perDepart;
+      const besoinRecouches = totalRecouches * perRecouche;
+      const besoinTwins = (totalTwinsDeparts * twinDepart) + (totalTwinsRecouches * twinRecouche);
+      const besoinActivite = besoinDeparts + besoinRecouches + besoinTwins;
+
+      const soldeAvantRebut = ecartMax + besoinActivite;
+      const surplus = soldeAvantRebut < 0 ? Math.round(Math.abs(soldeAvantRebut)) : 0;
+      const commandeNetteAvantRebut = soldeAvantRebut > 0 ? soldeAvantRebut : 0;
+      const order = Math.max(0, Math.round(commandeNetteAvantRebut + rebut));
+
+      return {
+        order,
+        surplus,
+        ecartMax,
+        rebut,
+        besoinActivite,
+        besoinDeparts,
+        besoinRecouches,
+        besoinTwins
+      };
+    }
+
+    function renderCommandeItems() {
+      const container = document.getElementById("commandeItems");
+      const focused = document.activeElement;
+      const focusInfo = focused && focused.dataset
+        ? { id: focused.dataset.id, field: focused.dataset.field }
+        : null;
+
+      container.innerHTML = state.items.map((item) => {
+        const calc = computeItemOrder(item);
+        const ecartLabel = calc.ecartMax >= 0 ? `+${calc.ecartMax}` : `${calc.ecartMax}`;
+        return `
+          <div class="item-card">
+            <div class="item-top">
+              <span class="item-name">${escapeHtml(item.name)}</span>
+              <div class="badges">
+                ${calc.surplus > 0 ? `<span class="surplus-badge">Surplus : ${calc.surplus}</span>` : ""}
+                <span class="order-badge">À commander : ${calc.order}</span>
+              </div>
+            </div>
+            <div class="item-inputs">
+              <label class="field">
+                Max
+                <input type="number" min="0" data-id="${item.id}" data-field="max" value="${num(item.max)}" />
+              </label>
+              <label class="field">
+                Stock (lingerie)
+                <input type="number" min="0" data-id="${item.id}" data-field="stock" value="${num(item.stock)}" />
+              </label>
+              <label class="field">
+                Rebut
+                <input type="number" min="0" data-id="${item.id}" data-field="rebut" value="${num(item.rebut)}" />
+              </label>
+            </div>
+            <div class="breakdown">
+              Détail : Écart Max (${ecartLabel}) + Activité/Twins (+${calc.besoinActivite} : dép. ${calc.besoinDeparts} / rec. ${calc.besoinRecouches} / twins ${calc.besoinTwins})${calc.surplus > 0 ? ` → Surplus ${calc.surplus}` : ""} + Rebut (+${calc.rebut}) = <strong>${calc.order}</strong>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      if (focusInfo && focusInfo.id && focusInfo.field) {
+        const target = container.querySelector(
+          `input[data-id="${focusInfo.id}"][data-field="${focusInfo.field}"]`
+        );
+        if (target) target.focus();
+      }
+    }
+
+    function renderBonDeCommande() {
+      const lines = ["BON DE COMMANDE"];
+      state.items.forEach((item) => {
+        const { order } = computeItemOrder(item);
+        lines.push(`${item.name} : ${order}`);
+      });
+      document.getElementById("bonDeCommande").textContent = lines.join("\n");
+    }
+
+    function renderAjustementItems() {
+      const container = document.getElementById("ajustementItems");
+      container.innerHTML = state.items.map((item) => {
+        const delta = adjustDeltas[item.id] ?? 0;
+        return `
+          <div class="item-card">
+            <div class="item-top">
+              <span class="item-name">${escapeHtml(item.name)}</span>
+              <span class="muted">Stock actuel : <strong>${num(item.stock)}</strong> / Max : <strong>${num(item.max)}</strong></span>
+            </div>
+            <div class="row-actions" style="margin-top:0; align-items:center;">
+              <label class="field" style="width:150px;">
+                Variation (+/-)
+                <input type="number" class="adj-delta-input" data-id="${item.id}" value="${delta}" />
+              </label>
+              <button type="button" class="primary adj-apply-btn" data-id="${item.id}">Appliquer</button>
+              <button type="button" class="adj-reset-stock-btn" data-id="${item.id}">Remettre au Max</button>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderConfigItems() {
+      const container = document.getElementById("configItems");
+      container.innerHTML = state.items.map((item) => `
+        <div class="item-card">
+          <div class="item-top">
+            <span class="item-name">${escapeHtml(item.name)}</span>
+            <button type="button" class="del-item-btn" data-id="${item.id}">Supprimer</button>
+          </div>
+          <div class="item-inputs">
+            <label class="field">
+              Nom
+              <input type="text" data-cfg-id="${item.id}" data-cfg-field="name" value="${escapeAttr(item.name)}" />
+            </label>
+            <label class="field">
+              Max
+              <input type="number" min="0" data-cfg-id="${item.id}" data-cfg-field="max" value="${num(item.max)}" />
+            </label>
+            <label class="field">
+              Stock
+              <input type="number" min="0" data-cfg-id="${item.id}" data-cfg-field="stock" value="${num(item.stock)}" />
+            </label>
+            <label class="field">
+              Rebut
+              <input type="number" min="0" data-cfg-id="${item.id}" data-cfg-field="rebut" value="${num(item.rebut)}" />
+            </label>
+            <label class="field">
+              Par départ
+              <input type="number" min="0" step="0.5" data-cfg-id="${item.id}" data-cfg-field="perDepart" value="${num(item.perDepart)}" />
+            </label>
+            <label class="field">
+              Par recouche
+              <input type="number" min="0" step="0.5" data-cfg-id="${item.id}" data-cfg-field="perRecouche" value="${num(item.perRecouche)}" />
+            </label>
+            <label class="field">
+              Twin départ
+              <input type="number" min="0" step="0.5" data-cfg-id="${item.id}" data-cfg-field="twinDepart" value="${num(item.twinDepart)}" />
+            </label>
+            <label class="field">
+              Twin recouche
+              <input type="number" min="0" step="0.5" data-cfg-id="${item.id}" data-cfg-field="twinRecouche" value="${num(item.twinRecouche)}" />
+            </label>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function escapeAttr(str) {
+      return escapeHtml(str).replace(/'/g, "&#39;");
+    }
+
+    function renderAll() {
+      applyTheme();
+      applyVisibility();
+      syncActivityFields();
+      renderCommandeItems();
+      renderBonDeCommande();
+      renderAjustementItems();
+      renderConfigItems();
+      saveState();
+    }
+
+    // Événements globaux
+    document.getElementById("themeToggleBtn").addEventListener("click", () => {
+      state.theme = state.theme === "dark" ? "light" : "dark";
+      renderAll();
+    });
+
+    document.getElementById("showAllBtn").addEventListener("click", () => {
+      state.showAll = !state.showAll;
+      renderAll();
+    });
+
+    document.getElementById("saveBtn").addEventListener("click", () => {
+      saveState();
+      const btn = document.getElementById("saveBtn");
+      const prev = btn.textContent;
+      btn.textContent = "Enregistré ✓";
+      setTimeout(() => { btn.textContent = prev; }, 1400);
+    });
+
+    document.getElementById("resetDefaultBtn").addEventListener("click", () => {
+      state = structuredClone(DEFAULT_STATE);
+      renderAll();
+    });
+
+    document.querySelectorAll(".tab-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        state.showAll = false;
+        state.activeTab = btn.dataset.tab;
+        renderAll();
+      });
+    });
+
+    // Synchronisation fréquentation Réel & Prévisionnel
+    const activityIds = [
+      "reelChambres", "reelDeparts", "reelRecouches", "reelTwinsDeparts", "reelTwinsRecouches",
+      "prevChambres", "prevDeparts", "prevRecouches", "prevTwinsDeparts", "prevTwinsRecouches"
+    ];
+
+    activityIds.forEach((id) => {
+      document.getElementById(id).addEventListener("input", (e) => {
+        state.activity[id] = Math.max(0, num(e.target.value));
+        state.activity = sanitizeActivity(state.activity);
+        syncActivityFields();
+        renderCommandeItems();
+        renderBonDeCommande();
+        saveState();
+      });
+    });
+
+    // Édition directe Max / Stock / Rebut sur les cartes d'articles
+    document.getElementById("commandeItems").addEventListener("input", (e) => {
+      const id = e.target.dataset.id;
+      const field = e.target.dataset.field;
+      if (!id || !field) return;
+      const item = state.items.find((it) => it.id === id);
+      if (!item) return;
+      item[field] = Math.max(0, num(e.target.value));
+      renderCommandeItems();
+      renderBonDeCommande();
+      renderAjustementItems();
+      renderConfigItems();
+      saveState();
+    });
+
+    // Ajustements de stock
+    document.getElementById("ajustementItems").addEventListener("input", (e) => {
+      if (e.target.classList.contains("adj-delta-input")) {
+        adjustDeltas[e.target.dataset.id] = num(e.target.value);
+      }
+    });
+
+    document.getElementById("ajustementItems").addEventListener("click", (e) => {
+      const id = e.target.dataset.id;
+      if (!id) return;
+      const item = state.items.find((it) => it.id === id);
+      if (!item) return;
+
+      if (e.target.classList.contains("adj-apply-btn")) {
+        const delta = num(adjustDeltas[id], 0);
+        item.stock = Math.max(0, num(item.stock) + delta);
+        adjustDeltas[id] = 0;
+        renderAll();
+      } else if (e.target.classList.contains("adj-reset-stock-btn")) {
+        item.stock = num(item.max);
+        adjustDeltas[id] = 0;
+        renderAll();
+      }
+    });
+
+    // Configuration des articles
+    document.getElementById("configItems").addEventListener("input", (e) => {
+      const id = e.target.dataset.cfgId;
+      const field = e.target.dataset.cfgField;
+      if (!id || !field) return;
+      const item = state.items.find((it) => it.id === id);
+      if (!item) return;
+
+      if (field === "name") {
+        item.name = e.target.value;
+      } else {
+        item[field] = Math.max(0, num(e.target.value));
+      }
+      renderCommandeItems();
+      renderBonDeCommande();
+      renderAjustementItems();
+      saveState();
+    });
+
+    document.getElementById("configItems").addEventListener("click", (e) => {
+      if (!e.target.classList.contains("del-item-btn")) return;
+      const id = e.target.dataset.id;
+      state.items = state.items.filter((it) => it.id !== id);
+      renderAll();
+    });
+
+    document.getElementById("addItemBtn").addEventListener("click", () => {
+      const nameInput = document.getElementById("newItemName");
+      const name = nameInput.value.trim();
+      if (!name) return;
+
+      const slug = name
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-|-$/g, "") || `article-${Date.now()}`;
+
+      state.items.push({
+        id: `${slug}-${Date.now().toString(36)}`,
+        name,
+        max: Math.max(0, num(document.getElementById("newItemMax").value, 100)),
+        stock: Math.max(0, num(document.getElementById("newItemStock").value, 100)),
+        rebut: Math.max(0, num(document.getElementById("newItemRebut").value, 0)),
+        perDepart: Math.max(0, num(document.getElementById("newItemDepart").value, 0)),
+        perRecouche: Math.max(0, num(document.getElementById("newItemRecouche").value, 0)),
+        twinDepart: Math.max(0, num(document.getElementById("newItemTwinDepart").value, 0)),
+        twinRecouche: Math.max(0, num(document.getElementById("newItemTwinRecouche").value, 0))
+      });
+
+      nameInput.value = "";
+      renderAll();
+    });
+
+    document.getElementById("copyBonBtn").addEventListener("click", async () => {
+      const text = document.getElementById("bonDeCommande").textContent;
+      try {
+        await navigator.clipboard.writeText(text);
+        const btn = document.getElementById("copyBonBtn");
+        const prev = btn.textContent;
+        btn.textContent = "Copié !";
+        setTimeout(() => { btn.textContent = prev; }, 1200);
+      } catch {
+        // Fallback silencieux si clipboard refusé
+      }
+    });
+
+    renderAll();
+  </script>
+</body>
+</html>
